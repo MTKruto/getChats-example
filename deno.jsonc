@@ -1,0 +1,13 @@
+{
+  "lock": false,
+  "tasks": {
+    "build": "deno run --allow-env --allow-hrtime --allow-net --allow-read --allow-write=public/ build.ts",
+    "dev": "deno run --allow-env --allow-hrtime --allow-net --allow-read --allow-write=public/ build.ts --watch"
+  },
+  "exclude": ["public/*.js"],
+  "importMap": "./import_map.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact"
+  }
+}
