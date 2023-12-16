@@ -48,13 +48,13 @@ function getDate(date: Date) {
 export function Chat({ children: chat }: { children: Chat_ }) {
   return (
     <div
-      class={`flex pl-3 gap-1 items-center overflow-hidden ${
+      class={`flex pl-3 gap-3 items-center overflow-hidden ${
         chat.pinned == -1 ? "bg-[#18212D]" : "bg-[#1e2938]"
       }`}
     >
       <Photo>{chat}</Photo>
       <div
-        class={`py-2 px-3 w-full overflow-hidden border-b border-[#2C3848] min-h-[81px]`}
+        class={`py-2 pr-3 w-full overflow-hidden border-b border-[#2C3848] min-h-[81px]`}
       >
         <div class="flex gap-1 items-start justify-between">
           <div class="font-bold">{getTitle(chat)}</div>
@@ -83,14 +83,22 @@ export function Chat({ children: chat }: { children: Chat_ }) {
             })()}
             <div class="flex items-center overflow-hidden gap-1">
               {Object.keys(chat.lastMessage).some((v) =>
-                ["photo", "video", "audio", "voice", "sticker", "contact"]
+                [
+                  "photo",
+                  "video",
+                  "audio",
+                  "voice",
+                  "sticker",
+                  "contact",
+                  "animation",
+                ]
                   .includes(v)
               ) && (
-                <div class="text-sm">
-                  {"photo" in chat.lastMessage && "📸"}
-                  {"video" in chat.lastMessage && "🎥"}
-                  {"audio" in chat.lastMessage && "🎵"}
-                  {"voice" in chat.lastMessage && "🎙"}
+                <div class="text-sm opacity-50">
+                  {"photo" in chat.lastMessage && "🖼 Photo"}
+                  {"video" in chat.lastMessage && "🎥 Video"}
+                  {"audio" in chat.lastMessage && "🎵 Audio"}
+                  {"voice" in chat.lastMessage && "🎙 Voice"}
                   {"sticker" in chat.lastMessage && (
                     <>
                       {chat.lastMessage.sticker?.emoji
@@ -99,6 +107,7 @@ export function Chat({ children: chat }: { children: Chat_ }) {
                     </>
                   )}
                   {"contact" in chat.lastMessage && "Contact"}
+                  {"animation" in chat.lastMessage && "GIF"}
                 </div>
               )}
               {(chat.lastMessage.text || chat.lastMessage.caption) && (

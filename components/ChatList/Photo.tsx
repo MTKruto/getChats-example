@@ -31,16 +31,16 @@ export function Photo({ children: chat }: { children: Chat_ }) {
   const url = photos.value.get(chat.id);
   const isForum = chat.type == "supergroup" && chat.isForum;
   const corners = isForum ? "rounded-lg" : "rounded-full";
-  return (
+  return (  
     <>
       {url == null
         ? (
           <div
-            class={`w-[50px] min-w-[50px] min-h-[50px] h-[50px] bg-black ${corners}`} // TODO: fallback to chat.color
+            class={`w-[60px] min-w-[60px] min-h-[60px] h-[60px] bg-black ${corners}`} // TODO: fallback to chat.color
           >
           </div>
         )
-        : <img src={url} class={`w-[50px] h-[50px] ${corners}`} />}
+        : <img src={url} class={`w-[60px] h-[60px] ${corners}`} />}
     </>
   );
 }
