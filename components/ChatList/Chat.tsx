@@ -1,4 +1,5 @@
 import { Chat as Chat_, Message } from "mtkruto/mod.ts";
+import { Photo } from "./Photo.tsx";
 
 function getTitle(chat: Chat_) {
   if ("title" in chat) {
@@ -47,61 +48,68 @@ function getDate(date: Date) {
 export function Chat({ children: chat }: { children: Chat_ }) {
   return (
     <div
-      class={`py-2 px-3 border-b border-[#2C3848] min-h-[81px] ${
+      class={`flex pl-3 gap-1 items-center overflow-hidden ${
         chat.pinned == -1 ? "bg-[#18212D]" : "bg-[#1e2938]"
       }`}
     >
-      <div class="flex gap-1 items-start justify-between">
-        <div class="font-bold">{getTitle(chat)}</div>
+      <Photo>{chat}</Photo>
+      <div
+        class={`py-2 px-3 w-full overflow-hidden border-b border-[#2C3848] min-h-[81px]`}
+      >
+        <div class="flex gap-1 items-start justify-between">
+          <div class="font-bold">{getTitle(chat)}</div>
+          {chat.lastMessage && (
+            <div class="opacity-50 text-sm">
+              {getDate(chat.lastMessage.date)}
+            </div>
+          )}
+        </div>
         {chat.lastMessage && (
-          <div class="opacity-50 text-sm">{getDate(chat.lastMessage.date)}</div>
+          <>
+            {(() => {
+              if (!chat.lastMessage) {
+                return null;
+              }
+              const sender = getSenderName(chat.lastMessage);
+              if (sender !== null) {
+                return (
+                  <div class="font-medium text-sm">
+                    {sender}
+                  </div>
+                );
+              } else {
+                return null;
+              }
+            })()}
+            <div class="flex items-center overflow-hidden gap-1">
+              {Object.keys(chat.lastMessage).some((v) =>
+                ["photo", "video", "audio", "voice", "sticker", "contact"]
+                  .includes(v)
+              ) && (
+                <div class="text-sm">
+                  {"photo" in chat.lastMessage && "📸"}
+                  {"video" in chat.lastMessage && "🎥"}
+                  {"audio" in chat.lastMessage && "🎵"}
+                  {"voice" in chat.lastMessage && "🎙"}
+                  {"sticker" in chat.lastMessage && (
+                    <>
+                      {chat.lastMessage.sticker?.emoji
+                        ? (chat.lastMessage.sticker.emoji + " ")
+                        : ""}Sticker
+                    </>
+                  )}
+                  {"contact" in chat.lastMessage && "Contact"}
+                </div>
+              )}
+              {(chat.lastMessage.text || chat.lastMessage.caption) && (
+                <div class="text-sm opacity-50 truncate">
+                  {chat.lastMessage.text || chat.lastMessage.caption}
+                </div>
+              )}
+            </div>
+          </>
         )}
       </div>
-      {chat.lastMessage && (
-        <>
-          {(() => {
-            if (!chat.lastMessage) {
-              return null;
-            }
-            const sender = getSenderName(chat.lastMessage);
-            if (sender !== null) {
-              return (
-                <div class="font-medium text-sm">
-                  {sender}
-                </div>
-              );
-            } else {
-              return null;
-            }
-          })()}
-          <div class="flex items-center overflow-hidden gap-1">
-            {Object.keys(chat.lastMessage).some((v) =>
-              ["photo", "video", "audio", "voice", "sticker", "contact"]
-                .includes(v)
-            ) && (
-              <div class="text-sm">
-                {"photo" in chat.lastMessage && "📸"}
-                {"video" in chat.lastMessage && "🎥"}
-                {"audio" in chat.lastMessage && "🎵"}
-                {"voice" in chat.lastMessage && "🎙"}
-                {"sticker" in chat.lastMessage && (
-                  <>
-                    {chat.lastMessage.sticker?.emoji
-                      ? (chat.lastMessage.sticker.emoji + " ")
-                      : ""}Sticker
-                  </>
-                )}
-                {"contact" in chat.lastMessage && "Contact"}
-              </div>
-            )}
-            {(chat.lastMessage.text || chat.lastMessage.caption) && (
-              <div class="text-sm opacity-50 truncate">
-                {chat.lastMessage.text || chat.lastMessage.caption}
-              </div>
-            )}
-          </div>
-        </>
-      )}
     </div>
   );
 }
