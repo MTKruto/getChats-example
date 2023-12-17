@@ -1,7 +1,7 @@
 import { Chat } from "mtkruto/mod.ts";
 import { signal } from "@preact/signals";
-import { client } from "../client.ts";
 import { Mutex } from "async-mutex";
+import { client } from "../client.ts";
 
 export const photos = signal(new Map<number, string>());
 export const chats = signal(new Map<number, Chat>());
@@ -34,10 +34,17 @@ async function downloadChatPhoto(chat: Chat) {
 
 client.on("newChat", (ctx) => {
   chats.value = new Map(chats.value.set(ctx.newChat.id, ctx.newChat));
+  downloadChatPhoto(ctx.newChat);
 });
 
 client.on("editedChat", (ctx) => {
   chats.value = new Map(chats.value.set(ctx.editedChat.id, ctx.editedChat));
+  downloadChatPhoto(ctx.editedChat);
+});
+
+client.on("deletedChat", (ctx) => {
+  chats.value.delete(ctx.deletedChat.chatId);
+  chats.value = new Map(chats.value);
 });
 
 let after: Chat | undefined = undefined;

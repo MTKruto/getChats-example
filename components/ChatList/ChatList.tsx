@@ -1,8 +1,8 @@
+import { createRef } from "preact";
+import { useEffect } from "preact/hooks";
+import { useAutoAnimate } from "@formkit/auto-animate/preact";
 import { Chat } from "./Chat.tsx";
 import { chats, loadChats } from "../../state/chats.ts";
-import { useAutoAnimate } from "@formkit/auto-animate/preact";
-import { useEffect } from "preact/hooks";
-import { createRef } from "preact";
 
 export function ChatList() {
   const divRef = createRef<HTMLDivElement>();
