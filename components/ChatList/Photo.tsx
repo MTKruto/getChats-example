@@ -26,24 +26,29 @@ function brighten(hex: string, by: number) {
     ((0 | (1 << 8) + b + (256 - b) * by).toString(16)).substring(1);
 }
 
-export function Photo({ children: chat }: { children: Chat_ }) {
+export function Photo(
+  { small, children: chat }: { small?: boolean; children: Chat_ },
+) {
   const url = photos.value.get(chat.id);
   const isForum = chat.type == "supergroup" && chat.isForum;
   const corners = isForum ? "rounded-xl" : "rounded-full";
   const color = peerColors[chat.color][0];
+  const size = small ? 40 : 60;
   return (
     <>
       {url == null
         ? (
           <div
-            class={`flex items-center justify-center leading-none overflow-hidden text-2xl w-[60px] min-w-[60px] min-h-[60px] h-[60px] bg-gradient-to-b from-[${
+            class={`flex items-center justify-center leading-none overflow-hidden ${
+              small ? "text-base" : "text-2xl"
+            } w-[${size}px] min-w-[${size}px] min-h-[${size}px] h-[${size}px] bg-gradient-to-b from-[${
               brighten(color, 0.6)
             }] to-[${color}] ${corners}`}
           >
             <div style="translate-y-[-1px] z-[2]">{getLetterMark(chat)}</div>
           </div>
         )
-        : <img src={url} class={`w-[60px] h-[60px] ${corners}`} />}
+        : <img src={url} class={`w-[${size}px] h-[${size}px] ${corners}`} />}
     </>
   );
 }

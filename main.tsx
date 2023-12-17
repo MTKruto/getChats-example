@@ -15,4 +15,3 @@ installTwind();
 render(<App />, document.body);
 
 await startClient();
-await loadChats();

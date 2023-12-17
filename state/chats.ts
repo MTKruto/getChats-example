@@ -1,4 +1,4 @@
-import { Chat } from "mtkruto/mod.ts";
+import { Chat, ChatID } from "mtkruto/mod.ts";
 import { signal } from "@preact/signals";
 import { Mutex } from "async-mutex";
 import { client } from "../client.ts";
@@ -7,7 +7,11 @@ export const photos = signal(new Map<number, string>());
 export const chats = signal(new Map<number, Chat>());
 
 const chatPhotoMutex = new Mutex();
-async function downloadChatPhoto(chat: Chat) {
+export async function downloadChatPhoto(chatId: ChatID) {
+  const chat = await client.getChat(chatId);
+  await downloadChatPhoto_(chat);
+}
+async function downloadChatPhoto_(chat: Chat) {
   if (chat.photo) {
     const release = await chatPhotoMutex.acquire();
     try {
@@ -34,12 +38,12 @@ async function downloadChatPhoto(chat: Chat) {
 
 client.on("newChat", (ctx) => {
   chats.value = new Map(chats.value.set(ctx.newChat.id, ctx.newChat));
-  downloadChatPhoto(ctx.newChat);
+  downloadChatPhoto_(ctx.newChat);
 });
 
 client.on("editedChat", (ctx) => {
   chats.value = new Map(chats.value.set(ctx.editedChat.id, ctx.editedChat));
-  downloadChatPhoto(ctx.editedChat);
+  downloadChatPhoto_(ctx.editedChat);
 });
 
 client.on("deletedChat", (ctx) => {
@@ -60,7 +64,7 @@ export async function loadChats() {
     const chats_ = await client.getChats({ after, limit });
     for (const chat of chats_) {
       chats.value = new Map(chats.value.set(chat.id, chat));
-      downloadChatPhoto(chat);
+      downloadChatPhoto_(chat);
     }
     if (chats_.length < limit) {
       allLoaded = true;

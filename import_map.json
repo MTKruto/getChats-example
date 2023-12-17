@@ -10,6 +10,8 @@
     "@preact/signals-core": "https://esm.sh/*@preact/signals-core@1.2.2",
     "@twind/preset-tailwind": "https://esm.sh/@twind/preset-tailwind@1.1.4",
     "@formkit/auto-animate/preact": "https://esm.sh/*@formkit/auto-animate@0.8.1/preact",
-    "async-mutex": "https://esm.sh/async-mutex@0.4.0"
+    "async-mutex": "https://esm.sh/async-mutex@0.4.0",
+    "wouter-preact": "https://esm.sh/wouter-preact@2.12.2",
+    "wouter-preact/": "https://esm.sh/wouter-preact@2.12.2/"
   }
 }
