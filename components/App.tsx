@@ -37,10 +37,12 @@ export function App() {
         </div>
       </header>
       <main class="w-full max-w-xl mx-auto">
-        <Router hook={useHashLocation}>
-          <Route path="/" component={ChatList} />
-          <Route path="/:id" component={Messages} />
-        </Router>
+        {connectionState.value == "ready" && (
+          <Router hook={useHashLocation}>
+            <Route path="/" component={ChatList} />
+            <Route path="/:id" component={Messages} />
+          </Router>
+        )}
       </main>
     </>
   );

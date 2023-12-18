@@ -10,6 +10,8 @@ export function getMessageSenderName(message: Message) {
     ) {
       return message.senderChat.title;
     }
+  } else if (message.chat.type == "channel") {
+    return message.chat.title;
   }
   return null;
 }

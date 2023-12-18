@@ -35,8 +35,9 @@ export function Messages() {
           hideSender = false;
         }
         const prev = messages.value[i - 1];
-        const prevId = prev?.from?.id ?? prev?.senderChat?.id ?? NaN;
-        const currId = v.from?.id ?? v.senderChat?.id ?? NaN;
+        const prevId = prev?.from?.id ?? prev?.senderChat?.id ?? v.chat?.id ??
+          NaN;
+        const currId = v.from?.id ?? v.senderChat?.id ?? v.chat?.id ?? NaN;
         if (prevId == currId) {
           hideSender = true;
         } else {

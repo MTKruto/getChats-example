@@ -17,14 +17,19 @@ export function Message(
     return null;
   }
   const color =
-    peerColors[message.senderChat?.color ?? message.from?.color ?? 0][0];
+    peerColors[
+      message.senderChat?.color ?? message.from?.color ?? message.chat?.color ??
+        0
+    ][0];
   const sender = useSignal<Chat | null>(null);
   useEffect(() => {
     if (hideSender) {
       return;
     }
     (async () => {
-      const id = message.from?.id ?? message.senderChat?.id;
+      const id = message.chat.type == "channel"
+        ? message.chat.id
+        : (message.from?.id ?? message.senderChat?.id);
       if (id) {
         sender.value = await client.getChat(id);
         downloadChatPhoto(id);
