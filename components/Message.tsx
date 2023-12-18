@@ -16,11 +16,10 @@ export function Message(
   if (!message.text) {
     return null;
   }
-  const color =
-    peerColors[
-      message.senderChat?.color ?? message.from?.color ?? message.chat?.color ??
-        0
-    ][0];
+  const color = peerColors[
+    message.senderChat?.color ?? message.from?.color ?? message.chat?.color ??
+      0
+  ][0];
   const sender = useSignal<Chat | null>(null);
   useEffect(() => {
     if (hideSender) {
