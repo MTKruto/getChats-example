@@ -2,7 +2,7 @@
   "imports": {
     "std/": "https://deno.land/std@0.208.0/",
     "emit/": "https://deno.land/x/emit@0.32.0/",
-    "mtkruto/": "../../Projects/MTKruto/",
+    "mtkruto/": "../MTKruto/",
     "preact": "https://esm.sh/preact@10.19.3",
     "preact/": "https://esm.sh/preact@10.19.3/",
     "@twind/core": "https://esm.sh/@twind/core@1.1.3",

@@ -65,6 +65,11 @@ function getNestedEntities(entity: MessageEntity, entities: MessageEntity[]) {
   return nestedEntites;
 }
 
+const classes = {
+  botCommand: "text-blue-400",
+  "*tag": "text-blue-400",
+  link: "text-blue-400 cursor-pointer",
+};
 function renderEntity(
   entity: MessageEntity,
   content: ComponentChildren,
@@ -74,14 +79,23 @@ function renderEntity(
     case "mention":
       return <span class="mention">{content}</span>;
     case "hashtag":
-      return <span class="hashtag">{content}</span>;
+      return <span class={classes["*tag"]}>{content}</span>;
     case "botCommand":
-      return <span class="bot-command">{content}</span>;
+      return <span class={classes.botCommand}>{content}</span>;
     case "url":
-      return <a href={text} rel="noreferrer noopener">{content}</a>;
+      return (
+        <a class={classes.link} href={text} rel="noreferrer noopener">
+          {content}
+        </a>
+      );
     case "email":
       return (
-        <a href={`mailto:${text}`} target="_blank" rel="noreferrer noopener">
+        <a
+          class={classes.link}
+          href={`mailto:${text}`}
+          target="_blank"
+          rel="noreferrer noopener"
+        >
           {content}
         </a>
       );
@@ -96,7 +110,7 @@ function renderEntity(
     case "textLink":
       return (
         <a
-          class="link"
+          class={classes.link}
           href={entity.url}
           target="_blank"
           rel="noreferrer noopener"
