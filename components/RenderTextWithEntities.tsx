@@ -72,11 +72,11 @@ function renderEntity(
 ) {
   switch (entity.type) {
     case "mention":
-      return <span>{content}</span>;
+      return <span class="mention">{content}</span>;
     case "hashtag":
-      return <span>{content}</span>;
+      return <span class="hashtag">{content}</span>;
     case "botCommand":
-      return <span>{content}</span>;
+      return <span class="bot-command">{content}</span>;
     case "url":
       return <a href={text} rel="noreferrer noopener">{content}</a>;
     case "email":
@@ -95,20 +95,25 @@ function renderEntity(
       return <pre class={`language-${entity.language}`}>{content}</pre>;
     case "textLink":
       return (
-        <a href={entity.url} target="_blank" rel="noreferrer noopener">
+        <a
+          class="link"
+          href={entity.url}
+          target="_blank"
+          rel="noreferrer noopener"
+        >
           {content}
         </a>
       );
     case "textMention":
-      return <span>{content}</span>;
+      return <span class="mention">{content}</span>;
     case "cashtag":
-      return <span>{content}</span>;
+      return <span class="cashtag">{content}</span>;
     case "phoneNumber":
       return <span>{content}</span>;
     case "underline":
       return <span class="underline">{content}</span>;
     case "strikethrough":
-      return <span class="strikethrough">{content}</span>;
+      return <span class="strike">{content}</span>;
     case "blockquote":
       return <span class="blockquote">{content}</span>;
     case "bankCard":

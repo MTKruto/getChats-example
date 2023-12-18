@@ -59,7 +59,7 @@ export function Message(
             </div>
           )}
           <div class="flex items-start justify-between">
-            <div class="whitespace-pre-wrap float-left [&_b]:font-bold [&_i]:italic [&_u]:underline [&_s]:strike">
+            <div class="whitespace-pre-wrap float-left">
               <RenderTextWithEntities entities={message.entities ?? []}>
                 {message.text}
               </RenderTextWithEntities>
