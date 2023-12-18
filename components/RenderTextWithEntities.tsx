@@ -113,7 +113,7 @@ function renderEntity(
     case "underline":
       return <span class="underline">{content}</span>;
     case "strikethrough":
-      return <span class="strike">{content}</span>;
+      return <span class="line-through">{content}</span>;
     case "blockquote":
       return <span class="blockquote">{content}</span>;
     case "bankCard":
