@@ -12,6 +12,7 @@
     "@formkit/auto-animate/preact": "https://esm.sh/*@formkit/auto-animate@0.8.1/preact",
     "async-mutex": "https://esm.sh/async-mutex@0.4.0",
     "wouter-preact": "https://esm.sh/wouter-preact@2.12.2",
-    "wouter-preact/": "https://esm.sh/wouter-preact@2.12.2/"
+    "wouter-preact/": "https://esm.sh/wouter-preact@2.12.2/",
+    "preact-render-to-string": "https://esm.sh/*preact-render-to-string@6.1.0"
   }
 }

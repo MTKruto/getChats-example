@@ -2,10 +2,11 @@ import { Chat, Message as Message_ } from "mtkruto/mod.ts";
 import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import { client } from "../client.ts";
-import { getMessageDate, getMessageSenderName, unparse } from "../utils.ts";
+import { getMessageDate, getMessageSenderName } from "../utils.ts";
 import { peerColors } from "../peer_colors.ts";
 import { downloadChatPhoto } from "../state/chats.ts";
 import { Photo } from "./ChatList/Photo.tsx";
+import { RenderTextWithEntities } from "./RenderTextWithEntities.tsx";
 
 export function Message(
   { children: message, hideSender }: {
@@ -35,7 +36,6 @@ export function Message(
       }
     })();
   }, []);
-  const text = unparse(message.text, message.entities ?? []);
   return (
     <div
       class={`px-4 ${
@@ -59,10 +59,11 @@ export function Message(
             </div>
           )}
           <div class="flex items-start justify-between">
-            <div
-              class="whitespace-pre-wrap float-left [&_b]:font-bold [&_i]:italic [&_u]:underline [&_s]:strike"
-              dangerouslySetInnerHTML={{ __html: text }}
-            />
+            <div class="whitespace-pre-wrap float-left [&_b]:font-bold [&_i]:italic [&_u]:underline [&_s]:strike">
+              <RenderTextWithEntities entities={message.entities ?? []}>
+                {message.text}
+              </RenderTextWithEntities>
+            </div>
             {hideSender && (
               <div class="opacity-50 self-start float-right text-right text-xs">
                 {message.editDate !== undefined && "edited "}
