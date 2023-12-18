@@ -1,9 +1,9 @@
 import { Chat, Message as Message_ } from "mtkruto/mod.ts";
-import { getMessageDate, getMessageSenderName, unparse } from "../utils.ts";
-import { peerColors } from "../peer_colors.ts";
 import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import { client } from "../client.ts";
+import { getMessageDate, getMessageSenderName, unparse } from "../utils.ts";
+import { peerColors } from "../peer_colors.ts";
 import { downloadChatPhoto } from "../state/chats.ts";
 import { Photo } from "./ChatList/Photo.tsx";
 

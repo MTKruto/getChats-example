@@ -1,8 +1,11 @@
 import { Chat as Chat_, Message } from "mtkruto/mod.ts";
 import { Link } from "wouter-preact";
-import { getMessageDate,getChatTitle, getMessageSenderName } from "../../utils.ts";
+import {
+  getChatTitle,
+  getMessageDate,
+  getMessageSenderName,
+} from "../../utils.ts";
 import { Photo } from "./Photo.tsx";
-
 
 function getText(message: Message | undefined) {
   let text = message?.text || message?.caption || "";

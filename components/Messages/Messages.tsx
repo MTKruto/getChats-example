@@ -44,7 +44,7 @@ export function Messages() {
         }
         return (
           <Message
-            key={`${v.id}-${v.editDate}-${hideSender}`}
+            key={`${v.id}-${hideSender}`}
             hideSender={hideSender}
           >
             {v}

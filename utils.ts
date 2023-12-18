@@ -1,4 +1,4 @@
-import { ChatP, Message ,MessageEntity} from "mtkruto/mod.ts";
+import { ChatP, Message, MessageEntity } from "mtkruto/mod.ts";
 
 export function getMessageSenderName(message: Message) {
   if (message.from) {

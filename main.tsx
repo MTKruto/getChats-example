@@ -8,7 +8,6 @@ import { render } from "preact";
 import { installTwind } from "./twind.ts";
 import { startClient } from "./client.ts";
 import { App } from "./components/App.tsx";
-import { loadChats } from "./state/chats.ts";
 
 installTwind();
 
