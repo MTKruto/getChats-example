@@ -1,10 +1,9 @@
-import { Fragment, h } from "preact";
+import { Fragment, h, render } from "preact";
 // @ts-ignore: w
 globalThis.h = h;
 // @ts-ignore: w
 globalThis.Fragment = Fragment;
 
-import { render } from "preact";
 import { installTwind } from "./twind.ts";
 import { startClient } from "./client.ts";
 import { App } from "./components/App.tsx";

@@ -1,6 +1,6 @@
 import { BaseLocationHook, Route, Router } from "wouter-preact";
 import { navigate, useLocationProperty } from "wouter-preact/use-location";
-import { connectionState } from "../state/connectionState.ts";
+import { connectionState } from "../state/connection_state.ts";
 import { ChatList } from "./ChatList/ChatList.tsx";
 import { Messages } from "./Messages/Messages.tsx";
 import { title } from "../state/title.ts";

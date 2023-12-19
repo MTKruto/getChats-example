@@ -1,5 +1,8 @@
-import { ComponentChildren } from "preact";
+import { ComponentChildren, createRef } from "preact";
 import { MessageEntity } from "mtkruto/3_types.ts";
+import { useEffect } from "preact/hooks";
+import { customEmoji, downloadCustomEmoji } from "../state/custom_emoji.ts";
+import { play } from "../lib/rlottie.ts";
 
 export function RenderTextWithEntities(
   { children: text, entities }: { children: string; entities: MessageEntity[] },
@@ -77,7 +80,7 @@ function renderEntity(
 ) {
   switch (entity.type) {
     case "mention":
-      return <span class="mention">{content}</span>;
+      return <span class={classes.link}>{content}</span>;
     case "hashtag":
       return <span class={classes["*tag"]}>{content}</span>;
     case "botCommand":
@@ -135,6 +138,39 @@ function renderEntity(
     case "spoiler":
       return <span>{content}</span>;
     case "customEmoji":
-      return <span>{content}</span>;
+      return <CustomEmoji replacement={content}>{entity}</CustomEmoji>;
+  }
+}
+
+function CustomEmoji(
+  { replacement, children }: {
+    replacement?: ComponentChildren;
+    children: MessageEntity.CustomEmoji;
+  },
+) {
+  const canvasRef = createRef();
+  const ce = customEmoji.value.get(children.customEmojiId);
+
+  useEffect(() => {
+    downloadCustomEmoji(children.customEmojiId);
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas && ce?.blob) {
+      play(canvas, ce.blob);
+    }
+  }, [canvasRef, ce]);
+
+  if (!ce) {
+    return <>{replacement}</>;
+  }
+
+  if (ce.mimeType == "application/x-tgsticker") {
+    return (
+      <canvas class="inline" ref={canvasRef} width={20} height={20}></canvas>
+    );
+  } else {
+    return <img src={ce.url} class="inline w-[20px] h-[20px]" />;
   }
 }
