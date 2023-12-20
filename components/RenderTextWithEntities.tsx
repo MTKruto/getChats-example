@@ -3,6 +3,7 @@ import { MessageEntity } from "mtkruto/3_types.ts";
 import { useEffect } from "preact/hooks";
 import { customEmoji, downloadCustomEmoji } from "../state/custom_emoji.ts";
 import { play } from "../lib/rlottie.ts";
+import { useSignal } from "@preact/signals";
 
 export function RenderTextWithEntities(
   { children: text, entities }: { children: string; entities: MessageEntity[] },
@@ -136,10 +137,44 @@ function renderEntity(
     case "bankCard":
       return <span>{content}</span>;
     case "spoiler":
-      return <span>{content}</span>;
+      return <Spoiler>{content}</Spoiler>;
     case "customEmoji":
       return <CustomEmoji replacement={content}>{entity}</CustomEmoji>;
   }
+}
+
+function Spoiler(
+  { children }: {
+    children?: ComponentChildren;
+  },
+) {
+  const open = useSignal(false);
+  useEffect(() => {
+    if (open.value) {
+      const timeout = setTimeout(() => {
+        open.value = false;
+      }, 20_000);
+      return () => clearTimeout(timeout);
+    }
+  }, [open.value]);
+  return (
+    <span
+      class={`inline-block overflow-hidden ${open.value ? "" : "rounded-md"}`}
+      onClick={() => {
+        if (!open.value) {
+          open.value = true;
+        }
+      }}
+    >
+      <span
+        class={`duration-200 ${open.value ? "" : "blur-sm"}`}
+      >
+        <span>
+          {children}
+        </span>
+      </span>
+    </span>
+  );
 }
 
 function CustomEmoji(
@@ -158,7 +193,9 @@ function CustomEmoji(
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas && ce?.blob) {
-      play(canvas, ce.blob);
+      const controller = new AbortController();
+      play(canvas, ce.blob, controller.signal);
+      return () => controller.abort();
     }
   }, [canvasRef, ce]);
 

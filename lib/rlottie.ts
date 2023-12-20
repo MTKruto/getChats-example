@@ -5,13 +5,20 @@ const mod = await init();
 
 const RlottieWasm = mod.RlottieWasm;
 
-export async function play(canvas: HTMLCanvasElement, data: Blob) {
+export async function play(
+  canvas: HTMLCanvasElement,
+  data: Blob,
+  signal: AbortSignal,
+) {
   const instance = new RlottieWasm();
   const json = inflate(await data.arrayBuffer(), { to: "string" });
   instance.load(json);
   const frameCount = instance.frames();
   let currFrame = 0;
   function tick() {
+    if (signal?.aborted) {
+      return;
+    }
     const context = canvas.getContext("2d");
     const buffer = instance.render(currFrame, canvas.width, canvas.height);
     const clampedBuffer = Uint8ClampedArray.from(buffer);
