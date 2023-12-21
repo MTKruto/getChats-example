@@ -29,6 +29,12 @@ async function startClientInner() {
       await client.start();
       break;
     } catch (err) {
+      if (!navigator.onLine) {
+        addEventListener("online", async () => {
+          await startClientInner();
+        }, { once: true });
+        break;
+      }
       console.error(err);
       console.warn("Failed to start client. Retrying in 5 seconds.");
       await new Promise((r) => setTimeout(r, 5_000));
@@ -41,6 +47,6 @@ export async function startClient() {
   } else {
     addEventListener("online", async () => {
       await startClientInner();
-    });
+    }, { once: true });
   }
 }

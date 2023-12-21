@@ -5,6 +5,7 @@ import { client } from "../client.ts";
 
 export const photos = signal(new Map<number, string>());
 export const chats = signal(new Map<number, Chat>());
+const downloadedPhotos = new Set<string>();
 
 const chatPhotoMutex = new Mutex();
 export async function downloadChatPhoto(chatId: ChatID) {
@@ -14,9 +15,12 @@ export async function downloadChatPhoto(chatId: ChatID) {
 async function downloadChatPhoto_(chat: Chat) {
   if (chat.photo) {
     const release = await chatPhotoMutex.acquire();
+    if (downloadedPhotos.has(chat.photo.smallFileUniqueId)) {
+      return;
+    }
     try {
       let blob = new Blob();
-      for await (const chunk of await client.download(chat.photo.smallFileId)) {
+      for await (const chunk of client.download(chat.photo.smallFileId)) {
         blob = new Blob([blob, chunk]);
       }
       const currentUrl = photos.value.get(chat.id);
@@ -30,6 +34,7 @@ async function downloadChatPhoto_(chat: Chat) {
       photos.value = new Map(
         photos.value.set(chat.id, URL.createObjectURL(blob)),
       );
+      downloadedPhotos.add(chat.photo.smallFileUniqueId);
     } finally {
       release();
     }

@@ -1,14 +1,38 @@
 import { ComponentChildren, createRef } from "preact";
 import { MessageEntity } from "mtkruto/3_types.ts";
 import { useEffect } from "preact/hooks";
-import { customEmoji, downloadCustomEmoji } from "../state/custom_emoji.ts";
 import { play } from "../lib/rlottie.ts";
-import { useSignal } from "@preact/signals";
+import { useComputed, useSignal } from "@preact/signals";
+import { peerColors } from "../peer_colors.ts";
+import { client } from "../client.ts";
+import { downloadFile, files } from "../state/files.ts";
 
 export function RenderTextWithEntities(
-  { children: text, entities }: { children: string; entities: MessageEntity[] },
+  { color, children: text, entities }: {
+    color: number;
+    children: string;
+    entities: MessageEntity[];
+  },
 ) {
-  return renderImpl(text, entities)[0];
+  const allEmoji =
+    /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])+$/
+      .test(text);
+  const normalEmojiSize = entities.some((v) => v.type == "blockquote");
+  const length = [...text].length;
+  const emojiSize = normalEmojiSize
+    ? 20
+    : allEmoji
+    ? length == 1 ? 100 : length <= 3 ? 55 : 30
+    : 20;
+  return renderImpl(
+    text,
+    entities,
+    undefined,
+    undefined,
+    undefined,
+    color,
+    emojiSize,
+  )[0];
 }
 
 // TODO: add tests
@@ -18,6 +42,8 @@ function renderImpl(
   length = 0,
   processedEntities = new Set<MessageEntity>(),
   components = new Array<ComponentChildren>(),
+  color: number,
+  emojiSize: number,
 ) {
   for (const entity of entities) {
     if (processedEntities.has(entity)) {
@@ -31,7 +57,13 @@ function renderImpl(
     const nestedEntities = getNestedEntities(entity, entities);
     const toPushText = text.slice(length, length + entity.length);
     if (!nestedEntities.length) {
-      const toPush = renderEntity(entity, toPushText, toPushText);
+      const toPush = renderEntity(
+        entity,
+        toPushText,
+        toPushText,
+        color,
+        emojiSize,
+      );
       components.push(toPush);
       length += toPushText.length;
     } else {
@@ -40,8 +72,17 @@ function renderImpl(
         nestedEntities,
         0,
         processedEntities,
+        undefined,
+        color,
+        emojiSize,
       );
-      const toPush = renderEntity(entity, content, toPushText);
+      const toPush = renderEntity(
+        entity,
+        content,
+        toPushText,
+        color,
+        emojiSize,
+      );
       components.push(toPush);
       length += toPushLength;
     }
@@ -78,6 +119,8 @@ function renderEntity(
   entity: MessageEntity,
   content: ComponentChildren,
   text: string,
+  color: number,
+  emojiSize: number,
 ) {
   switch (entity.type) {
     case "mention":
@@ -133,14 +176,49 @@ function renderEntity(
     case "strikethrough":
       return <span class="line-through">{content}</span>;
     case "blockquote":
-      return <span class="blockquote">{content}</span>;
+      return <Blockquote color={color}>{content}</Blockquote>;
     case "bankCard":
       return <span>{content}</span>;
     case "spoiler":
       return <Spoiler>{content}</Spoiler>;
     case "customEmoji":
-      return <CustomEmoji replacement={content}>{entity}</CustomEmoji>;
+      return (
+        <CustomEmoji size={emojiSize} replacement={content}>
+          {entity}
+        </CustomEmoji>
+      );
   }
+}
+
+function Blockquote(
+  { children, color }: {
+    children?: ComponentChildren;
+    color: number;
+  },
+) {
+  const colors = peerColors[color] ?? ["#fff"];
+  const first = colors[0];
+  const second = colors[1];
+  const third = colors[2];
+  const background = colors.length == 2
+    ? `repeating-linear-gradient(-45deg, ${first}, ${first} 10px, ${second} 10px, ${second} 20px)`
+    : colors.length == 3
+    ? `repeating-linear-gradient(-45deg, ${first}, ${first} 10px, ${second} 10px, ${second} 20px, ${third} 20px, ${third} 30px)`
+    : undefined;
+  return (
+    <div class="relative pl-4 pr-3 py-3 flex rounded-lg overflow-hidden bg-bg2">
+      <div
+        class={`w-1 absolute left-0 top-0 h-full rounded-l-sm ${
+          background === undefined ? `bg-[${first}]` : ""
+        }`}
+        style={{
+          background,
+        }}
+      >
+      </div>
+      {children}
+    </div>
+  );
 }
 
 function Spoiler(
@@ -149,6 +227,7 @@ function Spoiler(
   },
 ) {
   const open = useSignal(false);
+
   useEffect(() => {
     if (open.value) {
       const timeout = setTimeout(() => {
@@ -157,6 +236,7 @@ function Spoiler(
       return () => clearTimeout(timeout);
     }
   }, [open.value]);
+
   return (
     <span
       class={`inline-block overflow-hidden ${open.value ? "" : "rounded-md"}`}
@@ -178,36 +258,54 @@ function Spoiler(
 }
 
 function CustomEmoji(
-  { replacement, children }: {
+  { replacement, children, size }: {
     replacement?: ComponentChildren;
     children: MessageEntity.CustomEmoji;
+    size: number;
   },
 ) {
   const canvasRef = createRef();
-  const ce = customEmoji.value.get(children.customEmojiId);
+  const fileUniqueId = useSignal("");
+  const mimeType = useSignal("");
+  const url = useComputed(() => files.value.get(fileUniqueId.value));
 
   useEffect(() => {
-    downloadCustomEmoji(children.customEmojiId);
+    Promise.resolve().then(async () => {
+      const document = await client.getCustomEmojiDocuments(
+        children.customEmojiId,
+      ).then((v) => v[0]);
+      fileUniqueId.value = document.fileUniqueId;
+      mimeType.value = document.mimeType;
+      downloadFile(document.fileId, document.fileUniqueId);
+    });
   }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (canvas && ce?.blob) {
+    const url_ = url.value;
+    if (canvas && url_ && mimeType.value == "application/x-tgsticker") {
       const controller = new AbortController();
-      play(canvas, ce.blob, controller.signal);
+      Promise.resolve().then(async () => {
+        play(
+          canvas,
+          await fetch(url_).then((v) => v.blob()),
+          controller.signal,
+        );
+      });
       return () => controller.abort();
     }
-  }, [canvasRef, ce]);
+  }, [canvasRef, url.value, mimeType.value]);
 
-  if (!ce) {
+  if (!url.value) {
     return <>{replacement}</>;
   }
 
-  if (ce.mimeType == "application/x-tgsticker") {
+  if (mimeType.value == "application/x-tgsticker") {
     return (
-      <canvas class="inline" ref={canvasRef} width={20} height={20}></canvas>
+      <canvas class="inline" ref={canvasRef} width={size} height={size}>
+      </canvas>
     );
   } else {
-    return <img src={ce.url} class="inline w-[20px] h-[20px]" />;
+    return <img src={url.value} class={`inline w-[${size}px] h-[${size}px]`} />;
   }
 }

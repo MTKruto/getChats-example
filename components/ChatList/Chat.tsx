@@ -5,7 +5,7 @@ import {
   getMessageDate,
   getMessageSenderName,
 } from "../../utils.ts";
-import { Photo } from "./Photo.tsx";
+import { ChatPhoto } from "./Photo.tsx";
 
 function getText(message: Message | undefined) {
   let text = message?.text || message?.caption || "";
@@ -40,7 +40,7 @@ export function Chat({ children: chat }: { children: Chat_ }) {
         chat.pinned == -1 ? "bg-bg" : "bg-[#1e2938]"
       }`}
     >
-      <Photo>{chat}</Photo>
+      <ChatPhoto>{chat}</ChatPhoto>
       <div
         class={`py-2 pr-3 w-full overflow-hidden border-b border-[#2C3848] min-h-[81px]`}
       >

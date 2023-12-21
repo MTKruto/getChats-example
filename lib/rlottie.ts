@@ -22,11 +22,7 @@ export async function play(
     const context = canvas.getContext("2d");
     const buffer = instance.render(currFrame, canvas.width, canvas.height);
     const clampedBuffer = Uint8ClampedArray.from(buffer);
-    const imageData = new ImageData(
-      clampedBuffer,
-      canvas.width,
-      canvas.height,
-    );
+    const imageData = new ImageData(clampedBuffer, canvas.width, canvas.height);
     context?.putImageData(imageData, 0, 0);
     currFrame++;
     if (currFrame >= frameCount) {

@@ -4,7 +4,7 @@ import { useEffect } from "preact/hooks";
 import { Message } from "../Message.tsx";
 import { Title } from "../../state/title.ts";
 import { getChatTitle } from "../../utils.ts";
-import { Photo } from "../ChatList/Photo.tsx";
+import { ChatPhoto } from "../ChatList/Photo.tsx";
 import { chat, loadMessages, messages } from "../../state/messages.ts";
 
 export function Messages() {
@@ -24,7 +24,7 @@ export function Messages() {
       {messages.value.length > 0 && (
         <Title>
           <Link to="/" class="flex gap-2 items-center hover:opacity-50">
-            {chat.value && <Photo small>{chat.value}</Photo>}
+            {chat.value && <ChatPhoto small>{chat.value}</ChatPhoto>}
             {getChatTitle(messages.value[0].chat)}
           </Link>
         </Title>

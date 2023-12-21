@@ -26,7 +26,7 @@ function brighten(hex: string, by: number) {
     ((0 | (1 << 8) + b + (256 - b) * by).toString(16)).substring(1);
 }
 
-export function Photo(
+export function ChatPhoto(
   { small, children: chat }: { small?: boolean; children: Chat_ },
 ) {
   const url = photos.value.get(chat.id);
