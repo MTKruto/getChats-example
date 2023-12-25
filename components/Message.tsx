@@ -9,6 +9,7 @@ import { ChatPhoto } from "./ChatList/Photo.tsx";
 import { RenderTextWithEntities } from "./RenderTextWithEntities.tsx";
 import { Photo } from "./Photo.tsx";
 import { Sticker } from "./Sticker.tsx";
+import { Reactions } from "./Reactions.tsx";
 
 export function Message(
   { children: message, hideSender }: {
@@ -76,6 +77,7 @@ export function Message(
                   </RenderTextWithEntities>
                 </div>
               )}
+              {message.reactions && <Reactions>{message.reactions}</Reactions>}
             </div>
             {hideSender && (
               <div class="opacity-50 self-start float-right text-right text-xs">

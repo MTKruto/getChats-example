@@ -5,6 +5,13 @@ export function installTwind() {
   install({
     hash: false,
     presets: [presetTailwind()],
-    theme: { extend: { colors: { bg: "#18212D", bg2: "#1e2b3b" } } },
+    theme: {
+      extend: {
+        colors: {
+          bg: "#18212D",
+          bg2: "#1e2b3b",
+        },
+      },
+    },
   });
 }
