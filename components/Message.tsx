@@ -67,7 +67,7 @@ export function Message(
               {message.photo && <Photo>{message.photo}</Photo>}
               {message.sticker && <Sticker>{message.sticker}</Sticker>}
               {text && (
-                <div class="whitespace-pre-wrap float-left select-text [&_*]:select-text break-all">
+                <div class="whitespace-pre-wrap float-left select-text [&_*]:select-text">
                   <RenderTextWithEntities
                     entities={entities}
                     color={message.from?.color ?? message.senderChat?.color ??
