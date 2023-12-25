@@ -48,7 +48,7 @@ function renderImpl(
       continue;
     }
     if (length < entity.offset) {
-      const toPush = text.slice(0, entity.offset);
+      const toPush = text.slice(length, entity.offset);
       components.push(toPush);
       length += toPush.length;
     }
