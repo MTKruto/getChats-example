@@ -14,11 +14,13 @@ export function Reactions(
     return null;
   }
   return (
-    <div class="flex gap-3.5">
+    <div class="flex gap-2.5">
       {reactions.map((v) => (
         <div
           key={JSON.stringify(v)}
-          class="flex gap-1.5 text-sm items-center justify-center bg-bg2 px-3 py-1.5 rounded-2xl"
+          class={`flex gap-1.5 text-sm items-center justify-center px-3 py-1.5 rounded-2xl ${
+            v.chosen ? "bg-blue-400" : "bg-bg2"
+          }`}
         >
           {v.reaction.type == "emoji"
             ? (

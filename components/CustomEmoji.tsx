@@ -52,7 +52,7 @@ export function CustomEmoji(
 
   if (mimeType.value == "application/x-tgsticker") {
     return (
-      <canvas class="inline" ref={canvasRef} width={size} height={size}>
+      <canvas class="inline-block" ref={canvasRef} width={size} height={size}>
       </canvas>
     );
   } else {

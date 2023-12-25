@@ -47,12 +47,12 @@ export function Message(
       }`}
     >
       <div class="flex items-start gap-2">
-        {sender.value
+        {message.chat.type != "channel" && (sender.value
           ? <ChatPhoto small>{sender.value}</ChatPhoto>
-          : <div class="w-[40px] min-w-[40px]"></div>}
+          : <div class="w-[40px] min-w-[40px]"></div>)}
         <div class="inline-flex flex-col w-full">
           {!hideSender && (
-            <div class="flex items-center justify-between w-full">
+            <div class="flex items-center justify-between w-full gap-1.5">
               <div class={`text-[${color}]`}>
                 {getMessageSenderName(message)}
               </div>
@@ -67,7 +67,7 @@ export function Message(
               {message.photo && <Photo>{message.photo}</Photo>}
               {message.sticker && <Sticker>{message.sticker}</Sticker>}
               {text && (
-                <div class="whitespace-pre-wrap float-left select-text [&_*]:select-text">
+                <div class="whitespace-pre-wrap float-left select-text [&_*]:select-text break-all">
                   <RenderTextWithEntities
                     entities={entities}
                     color={message.from?.color ?? message.senderChat?.color ??
